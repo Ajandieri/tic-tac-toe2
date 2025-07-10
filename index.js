@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Online Game State ---
     let peer;
     let conn;
-    let playerSymbol = 'X'; // Host is 'X', joiner is 'O'
+    let playerSymbol = 'X'; // Default symbol, will be assigned by host in online mode
     let isMyTurn = false;
     const PEER_PREFIX = 'tictactoe-';
 
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             conn.on('open', () => {
                 playerSymbol = 'X';
-                conn.send({ type: 'init' });
+                conn.send({ type: 'init', symbol: 'O' }); // Tell the joiner they are 'O'
                 startGame('online');
             });
             conn.on('data', handleReceivedData);
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             joinStatus.textContent = 'Connecting...';
             conn = peer.connect(PEER_PREFIX + roomCode);
             conn.on('open', () => {
-                playerSymbol = 'O';
+                // The host will assign our symbol via the 'init' message.
             });
             conn.on('data', handleReceivedData);
             conn.on('close', handleDisconnect);
@@ -294,6 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleReceivedData(data) {
         switch (data.type) {
             case 'init':
+                playerSymbol = data.symbol; // Get symbol assignment from host
                 startGame('online');
                 break;
             case 'move':
@@ -345,24 +346,43 @@ document.addEventListener('DOMContentLoaded', () => {
         let move = null;
         const humanPlayer = 'X';
 
+        // Make a mistake 25% of the time
         if (Math.random() > 0.75) { 
             const availableCells = gameState.map((val, idx) => val === "" ? idx : null).filter(val => val !== null);
-            if (availableCells.length > 0) move = availableCells[Math.floor(Math.random() * availableCells.length)];
+            if (availableCells.length > 0) {
+                move = availableCells[Math.floor(Math.random() * availableCells.length)];
+            }
         } else {
-            move = findWinningOrBlockingMove(cpuPlayer) ?? findWinningOrBlockingMove(humanPlayer);
-            if (move === null && gameState[4] === "") move = 4;
+            // 1. Win if possible
+            move = findWinningOrBlockingMove(cpuPlayer);
+            // 2. Block if necessary
+            if (move === null) {
+                move = findWinningOrBlockingMove(humanPlayer);
+            }
+            // 3. Take center if available
+            if (move === null && gameState[4] === "") {
+                move = 4;
+            }
+            // 4. Take a random corner
             if (move === null) {
                 const corners = [0, 2, 6, 8].filter(idx => gameState[idx] === "");
-                if (corners.length > 0) move = corners[Math.floor(Math.random() * corners.length)];
+                if (corners.length > 0) {
+                    move = corners[Math.floor(Math.random() * corners.length)];
+                }
             }
         }
         
+        // 5. Take any available cell as a last resort
         if (move === null) {
             const available = gameState.map((val, idx) => val === "" ? idx : null).filter(val => val !== null);
-            if (available.length > 0) move = available[Math.floor(Math.random() * available.length)];
+            if (available.length > 0) {
+                move = available[Math.floor(Math.random() * available.length)];
+            }
         }
         
-        if (move !== null) handleCellPlayed(cells[move], move, cpuPlayer);
+        if (move !== null) {
+            handleCellPlayed(cells[move], move, cpuPlayer);
+        }
     }
 
     // --- Event Listeners ---
