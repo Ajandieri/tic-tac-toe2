@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreODisplay = document.getElementById('score-o');
     const scoreContainer = document.getElementById('score-container');
 
-    // --- Buttons ---
+    // --- Buttonsaa ---
     const playCpuBtn = document.getElementById('play-cpu-btn');
     const play2pBtn = document.getElementById('play-2p-btn');
     const hostGameBtn = document.getElementById('host-game-btn');
