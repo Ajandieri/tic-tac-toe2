@@ -1,0 +1,400 @@
+
+:root {
+    --bg-color-start: #1b2735;
+    --bg-color-end: #090a0f;
+    --cell-bg: #1f2a40;
+    --cell-hover-bg: #2a3b57;
+    --text-color: #e0e0e0;
+    --x-color: #00f6ff;
+    --o-color: #ff00a0;
+    --win-glow-x: rgba(0, 246, 255, 0.5);
+    --win-glow-o: rgba(255, 0, 160, 0.5);
+    --btn-neutral-color: #a9b7c6;
+    --title-outline-color: #7f7bcf;
+    --border-gap: 10px;
+    --cell-size: 100px;
+    --font-family: 'Poppins', sans-serif;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.4);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.15); /* Overshoot to create a bounce effect */
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes glowWin {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 10px var(--btn-neutral-color);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px var(--btn-neutral-color);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 10px var(--btn-neutral-color);
+    }
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at bottom, var(--bg-color-start) 0%, var(--bg-color-end) 100%);
+    color: var(--text-color);
+    text-align: center;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
+    user-select: none; /* Make text non-selectable */
+}
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-family: 'Cherry Bomb One', cursive;
+    font-size: 5.5rem;
+    font-weight: 400; /* Cherry Bomb One is available in 400 weight */
+    color: var(--text-color);
+    margin-bottom: 0.5em;
+    text-shadow: 
+        /* Outline */
+        0 0 3px var(--title-outline-color),
+        /* Glow */
+        0 0 30px var(--title-outline-color);
+    cursor: default;
+}
+
+.title-tic {
+    color: var(--x-color);
+    text-shadow: 
+        /* Outline */
+        0 0 3px var(--title-outline-color),
+        /* Player Glow */
+        0 0 30px var(--x-color);
+}
+
+.title-toe {
+    color: var(--o-color);
+    text-shadow:
+        /* Outline */
+        0 0 3px var(--title-outline-color),
+        /* Player Glow */
+        0 0 30px var(--o-color);
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, var(--cell-size));
+    grid-template-rows: repeat(3, var(--cell-size));
+    gap: var(--border-gap);
+    margin-bottom: 1em;
+}
+
+.cell {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-color: var(--cell-bg);
+    border: none;
+    border-radius: 12px;
+    font-size: 5rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease;
+    color: white; /* Overridden by X and O classes */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.cell:hover:not(:empty) {
+    cursor: not-allowed;
+}
+
+.cell:hover {
+    background-color: var(--cell-hover-bg);
+    transform: translateY(-2px);
+}
+
+.cell .mark {
+    display: inline-block; /* Essential for transform to apply */
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.cell.x {
+    color: var(--x-color);
+    text-shadow: 0 0 15px var(--x-color);
+}
+
+.cell.o {
+    color: var(--o-color);
+    text-shadow: 0 0 15px var(--o-color);
+}
+
+.cell.winning-cell {
+    animation: glowWin 1s infinite ease-in-out;
+}
+
+.cell.winning-cell.x {
+    background-color: var(--x-color);
+    color: var(--cell-bg);
+    box-shadow: 0 0 25px var(--win-glow-x);
+}
+.cell.winning-cell.o {
+    background-color: var(--o-color);
+    color: var(--cell-bg);
+    box-shadow: 0 0 25px var(--win-glow-o);
+}
+
+
+.status {
+    font-size: 1.5rem;
+    min-height: 2.25rem; /* Prevents layout shift */
+    margin-bottom: 0.5em;
+    font-weight: 400;
+    cursor: default;
+}
+
+.status .player-x, .score-container .player-x {
+    color: var(--x-color);
+    font-weight: 700;
+    text-shadow: 0 0 8px var(--x-color);
+}
+
+.status .player-o, .score-container .player-o {
+    color: var(--o-color);
+    font-weight: 700;
+    text-shadow: 0 0 8px var(--o-color);
+}
+
+.score-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: calc(3 * var(--cell-size) + 2 * var(--border-gap));
+    font-size: 1.2rem;
+    margin-bottom: 1.5em;
+    cursor: default;
+}
+
+.score-container p {
+    margin: 0;
+}
+
+.button-container {
+    display: flex;
+    gap: 15px;
+}
+
+.restart-btn {
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: var(--font-family);
+    background-color: transparent;
+    border: 2px solid var(--btn-neutral-color);
+    color: var(--btn-neutral-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    text-transform: uppercase;
+}
+
+.restart-btn.pulse {
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.restart-btn:hover {
+    background-color: var(--btn-neutral-color);
+    color: var(--bg-color-end);
+    box-shadow: 0 0 15px var(--btn-neutral-color);
+}
+
+footer {
+    margin-top: auto;
+    padding-bottom: 1rem;
+    color: rgba(224, 224, 224, 0.4);
+    font-size: 0.8rem;
+    font-weight: 400;
+    cursor: default;
+}
+
+footer p {
+    margin: 0;
+}
+
+.creator-name {
+    font-weight: bold;
+    color: var(--btn-neutral-color);
+    text-shadow: 0 0 8px var(--btn-neutral-color);
+}
+
+
+/* --- Online & Menu Styles --- */
+
+.hidden {
+    display: none !important;
+}
+
+#main-menu, #host-game-view, #join-game-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 2rem;
+    gap: 1rem;
+    max-width: 400px;
+}
+
+#host-game-view h2, #join-game-view h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    text-shadow: 0 0 10px var(--btn-neutral-color);
+}
+
+.room-code-container {
+    display: flex;
+    align-items: center;
+    background-color: var(--cell-bg);
+    border-radius: 8px;
+    padding: 10px 20px;
+    border: 2px solid var(--btn-neutral-color);
+}
+
+#room-code-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--x-color);
+    letter-spacing: 4px;
+    margin-right: 20px;
+    text-shadow: 0 0 10px var(--x-color);
+}
+
+.copy-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    font-family: var(--font-family);
+    background-color: transparent;
+    border: 2px solid var(--btn-neutral-color);
+    color: var(--btn-neutral-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.copy-btn:hover {
+    background-color: var(--btn-neutral-color);
+    color: var(--bg-color-end);
+}
+
+.join-input-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#room-code-input {
+    font-family: var(--font-family);
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 2px;
+    color: var(--text-color);
+    background-color: var(--cell-bg);
+    border: 2px solid var(--btn-neutral-color);
+    border-radius: 8px;
+    padding: 10px;
+    width: 150px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#room-code-input::placeholder {
+    color: rgba(224, 224, 224, 0.3);
+}
+
+#room-code-input:focus {
+    border-color: var(--o-color);
+    box-shadow: 0 0 15px var(--o-color);
+}
+
+.status-message {
+    min-height: 1.5rem;
+    font-size: 1rem;
+    color: rgba(224, 224, 224, 0.7);
+}
+
+.error-message {
+    color: #ff4d4d;
+    font-weight: bold;
+}
+
+.menu-button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 320px;
+}
+
+.menu-btn {
+    padding: 18px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    font-family: var(--font-family);
+    background-color: transparent;
+    border: 2px solid var(--btn-neutral-color);
+    color: var(--btn-neutral-color);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    text-transform: uppercase;
+    width: 100%;
+}
+
+.menu-btn:hover:not(:disabled) {
+    background-color: var(--btn-neutral-color);
+    color: var(--bg-color-end);
+    box-shadow: 0 0 20px var(--btn-neutral-color);
+    transform: translateY(-3px);
+}
+
+.menu-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    border-color: rgba(169, 183, 198, 0.5);
+    color: rgba(169, 183, 198, 0.5);
+}

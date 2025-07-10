@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <h1><span class="title-tic">Tic</span>-Tac-<span class="title-toe">Toe</span></h1>
+
+    <div id="main-menu">
+        <div class="menu-button-container">
+            <button id="play-cpu-btn" class="menu-btn">Play vs CPU</button>
+            <button id="play-2p-btn" class="menu-btn">2 Players</button>
+            <button id="host-game-btn" class="menu-btn">Host a Game</button>
+            <button id="join-game-btn" class="menu-btn">Join a Game</button>
+        </div>
+    </div>
+
+    <!-- Host Game View -->
+    <div id="host-game-view" class="hidden">
+        <h2>Host a Game</h2>
+        <p>Share this code with your friend:</p>
+        <div class="room-code-container">
+            <span id="room-code-display">------</span>
+            <button id="copy-code-btn" class="copy-btn" aria-label="Copy room code">Copy</button>
+        </div>
+        <p id="host-status" class="status-message">Waiting for a player to join...</p>
+        <button id="host-back-btn" class="restart-btn">Back to Menu</button>
+    </div>
+
+    <!-- Join Game View -->
+    <div id="join-game-view" class="hidden">
+        <h2>Join a Game</h2>
+        <p>Enter the 6-digit code from your friend:</p>
+        <div class="join-input-container">
+            <input type="text" id="room-code-input" placeholder="123456" maxlength="6" />
+            <button id="join-room-btn" class="menu-btn">Join</button>
+        </div>
+        <p id="join-status" class="status-message error-message"></p>
+        <button id="join-back-btn" class="restart-btn">Back to Menu</button>
+    </div>
+
+
+    <div id="game-container" class="hidden">
+        <div id="board" class="board">
+            <button class="cell" data-index="0" aria-label="Cell 0"></button>
+            <button class="cell" data-index="1" aria-label="Cell 1"></button>
+            <button class="cell" data-index="2" aria-label="Cell 2"></button>
+            <button class="cell" data-index="3" aria-label="Cell 3"></button>
+            <button class="cell" data-index="4" aria-label="Cell 4"></button>
+            <button class="cell" data-index="5" aria-label="Cell 5"></button>
+            <button class="cell" data-index="6" aria-label="Cell 6"></button>
+            <button class="cell" data-index="7" aria-label="Cell 7"></button>
+            <button class="cell" data-index="8" aria-label="Cell 8"></button>
+        </div>
+        <p id="status-display" class="status" role="status"></p>
+        <div id="score-container" class="score-container">
+            <p><span class="player-x">X</span> Wins: <span id="score-x">0</span></p>
+            <p><span class="player-o">O</span> Wins: <span id="score-o">0</span></p>
+        </div>
+        <div class="button-container">
+            <button id="restart-button" class="restart-btn">Restart Game</button>
+            <button id="main-menu-button" class="restart-btn">Main Menu</button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Game made by <span class="creator-name">Andria Jandieri</span> using Google AI Studio</p>
+    </footer>
+    <script type="module" src="index.js"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
